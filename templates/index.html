@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telegram MCQ Sender</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- React and ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <!-- Babel for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body, html {
+      height: 100%;
+      background-color: #f8f9fa;
+    }
+    #root {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      width: 100%;
+      max-width: 600px;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    function App() {
+      const [subject, setSubject] = useState('');
+      const [chat, setChat] = useState('test');
+      const [mcqs, setMcqs] = useState('');
+      const [result, setResult] = useState('');
+
+      const sendMCQs = async () => {
+        try {
+          const response = await fetch("/send_mcqs", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              subject: subject,
+              chat: chat,
+              mcqs: JSON.parse(mcqs)
+            })
+          });
+          const resData = await response.json();
+          setResult(JSON.stringify(resData));
+        } catch (e) {
+          setResult("Error: " + e.message);
+        }
+      };
+
+      return (
+        <div className="card shadow">
+          <h3 className="text-center mb-4">Telegram MCQ Sender</h3>
+          
+          <div className="mb-3">
+            <label className="form-label">Subject:</label>
+            <input 
+              className="form-control"
+              placeholder="Enter subject"
+              value={subject}
+              onChange={e => setSubject(e.target.value)}
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">Chat:</label>
+            <select 
+              className="form-select"
+              value={chat}
+              onChange={e => setChat(e.target.value)}
+            >
+              <option value="test">Test</option>
+              <option value="pro">Pro</option>
+            </select>
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">MCQs JSON:</label>
+            <textarea 
+              className="form-control" 
+              rows="8"
+              placeholder='Paste MCQs JSON here'
+              value={mcqs}
+              onChange={e => setMcqs(e.target.value)}
+            ></textarea>
+          </div>
+
+          <div className="text-center">
+            <button className="btn btn-primary" onClick={sendMCQs}>Send MCQs</button>
+          </div>
+
+          <div className="mt-3">
+            <strong>Result:</strong>
+            <pre>{result}</pre>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
