@@ -10,7 +10,7 @@ from dotenv import load_dotenv  # for local testing
 load_dotenv()
 
 # Telegram bot token from environment variable
-TOKEN = os.environ.get("TOKEN")
+TOKEN = "7061400729:AAEvv3mNmY1FhbXcMZc-40He_oWggW3hiyk"
 if not TOKEN:
     raise ValueError("Telegram bot token not set! Please define TOKEN in environment variables.")
 
